@@ -2,8 +2,6 @@ package com.syco.develop.eqgenerator.model.jpa;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Table(name = "quotes")
 public class QuoteEntity {

@@ -6,7 +6,15 @@
         <artifactId>eqgenerator</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>eqgenerator-web</artifactId>
-    <name>Archetype - eqgenerator-web</name>
-    <url>http://maven.apache.org</url>
+    <name>eqgenerator-web</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.syco.develop</groupId>
+            <artifactId>eqgenerator-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

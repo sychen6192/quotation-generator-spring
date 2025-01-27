@@ -6,7 +6,14 @@
         <artifactId>eqgenerator</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>eqgenerator-data</artifactId>
-    <name>Archetype - eqgenerator-data</name>
-    <url>http://maven.apache.org</url>
+
+    <artifactId>eqgenerator-core</artifactId>
+    <name>eqgenerator-core</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 </project>
