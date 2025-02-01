@@ -24,14 +24,4 @@ public class ItemEntity {
     @NotNull
     @Positive
     private Integer unitPrice;
-
-    @Transient
-    public Integer getTotalPrice() {
-        return this.unitPrice * this.quantity;
-    }
-
-    // 關聯到 QuoteEntity（多對一）
-    @ManyToOne
-    @JoinColumn(name = "quote_id", nullable = false)
-    private QuoteEntity quote;
 }

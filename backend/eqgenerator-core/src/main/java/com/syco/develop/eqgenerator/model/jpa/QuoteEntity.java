@@ -6,7 +6,6 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity
@@ -45,10 +44,6 @@ public class QuoteEntity {
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private CompanyEntity company;
-
-    // 關聯到 ItemEntity（一對多）
-    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemEntity> items;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdTimestamp;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCompanies, fetchQuotes } from '../services/api';
-import Header from '../components/Header';
-import CompanyTable from '../components/CompanyTable';
-import Layout from '../layouts/Layout';
+import { fetchCompanies, fetchQuotes } from '../../services/api';
+import Header from '../../components/Header';
+import CompanyTable from '../../components/CompanyTable';
+import Layout from '../../layouts/Layout';
 
 export interface Company {
   id: string;
@@ -23,7 +23,6 @@ const CompanyPage: React.FC = () => {
     const loadCompanies = async () => {
         try {
           const data = await fetchCompanies(); 
-          console.log(data);
           setCompanies(data);
         } catch (error) {
           console.error('Failed to fetch quotes:', error);

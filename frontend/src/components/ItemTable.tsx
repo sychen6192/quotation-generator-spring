@@ -1,51 +1,45 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, MoreVertical } from "lucide-react";
-import { deleteCompany } from "../services/api";
+import { deleteItem } from "../services/api";
 
-export interface Company {
+export interface Item {
   id: string;
   name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
+  quantity: number;
+  unitPrice: number;
 }
 
-interface CompanyTableProps {
-  companies: Company[];
-  setCompanies: React.Dispatch<React.SetStateAction<Company[]>>;
+interface ItemTableProps {
+  items: Item[];
+  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }
 
-const CompanyTable: React.FC<CompanyTableProps> = ({
-  companies,
-  setCompanies,
-}) => {
+const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
   const [search, setSearch] = useState("");
-  const navigate = useNavigate(); // React Router
-  const handleDelete = async (companyId: string) => {
-    if (!window.confirm("Are you sure you want to delete this company?"))
-      return;
+  const navigate = useNavigate();
+
+  const handleDelete = async (itemId: string) => {
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
 
     try {
-      await deleteCompany(companyId);
-      setCompanies(companies.filter((company) => company.id !== companyId));
+      await deleteItem(itemId);
+      setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
     } catch (error) {
-      console.error("Error deleting company:", error);
-      alert("Failed to delete company. Please try again.");
+      console.error("Error deleting item:", error);
+      alert("Failed to delete item. Please try again.");
     }
   };
 
-  const filteredCompanies = companies.filter((company) =>
-    company.name.toLowerCase().includes(search.toLowerCase())
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto">
         <div className="min-w-full inline-block align-middle">
-          {/* 搜尋框 */}
+          {/* 搜尋框 + 新增 Item 按鈕 */}
           <div className="flex items-center mb-4">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
@@ -65,18 +59,17 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
               </div>
               <input
                 type="text"
-                id="default-search"
                 className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none"
-                placeholder="Search for company"
+                placeholder="Search for items"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
-              onClick={() => navigate(`/companies/new`)}
+              onClick={() => navigate(`/items/new`)}
             >
-              Add New Company
+              + Add New Item
             </button>
           </div>
 
@@ -86,16 +79,13 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
               <thead>
                 <tr className="bg-gray-50">
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-t-xl">
-                    Company
+                    Item Name
                   </th>
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
-                    Tax ID
+                    Quantity
                   </th>
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
-                    Phone Number
-                  </th>
-                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
-                    Address
+                    Unit Price
                   </th>
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-t-xl">
                     Actions
@@ -103,38 +93,33 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-300">
-                {filteredCompanies.map((company) => (
+                {filteredItems.map((item) => (
                   <tr
-                    key={company.id}
+                    key={item.id}
                     className="bg-white transition-all duration-500 hover:bg-gray-50"
                   >
                     <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {company.name}
+                      {item.name}
                     </td>
                     <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {company.taxId}
+                      {item.quantity}
                     </td>
                     <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {company.phoneNumber}
-                    </td>
-                    <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {company.address}
+                      ${item.unitPrice.toFixed(2)}
                     </td>
                     <td className="p-5">
                       <div className="flex items-center gap-1">
                         <button className="p-2 rounded-full transition-all duration-500 cursor-pointer">
                           <Edit
                             className="w-5 h-5 text-indigo-500"
-                            onClick={() =>
-                              navigate(`/companies/${company.id}/edit`)
-                            }
+                            onClick={() => navigate(`/items/${item.id}/edit`)}
                           />
                         </button>
 
                         <button className="p-2 rounded-full transition-all duration-500 cursor-pointer">
                           <Trash
                             className="w-5 h-5 text-red-600"
-                            onClick={() => handleDelete(company.id)}
+                            onClick={() => handleDelete(item.id)}
                           />
                         </button>
 
@@ -145,10 +130,10 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
                     </td>
                   </tr>
                 ))}
-                {filteredCompanies.length === 0 && (
+                {filteredItems.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="text-center p-5 text-gray-500">
-                      No results found.
+                    <td colSpan={4} className="text-center p-5 text-gray-500">
+                      No items found.
                     </td>
                   </tr>
                 )}
@@ -161,4 +146,4 @@ const CompanyTable: React.FC<CompanyTableProps> = ({
   );
 };
 
-export default CompanyTable;
+export default ItemTable;

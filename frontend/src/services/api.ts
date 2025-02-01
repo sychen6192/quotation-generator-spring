@@ -17,11 +17,18 @@ export interface Quote {
 export interface Company {
   id: string;
   name: string;
-  tax_id: string;
-  phone_number: string;
+  taxId: string;
+  phoneNumber: string;
   address: string;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Item {
+  id: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
 }
 
 export interface CreateQuoteData {
@@ -72,6 +79,52 @@ export const fetchCompanies = async (): Promise<Company[]> => {
   return response.data;
 };
 
+export const fetchCompanyById = async (companyId: string) => {
+  const response = await api.get<Company>(`/companies/${companyId}`);
+  return response.data
+};
+
+export const createCompany = async (companyData: Company): Promise<Company> => {
+  const response = await api.post<Company>('/companies', companyData);
+  return response.data;
+};
+
+export const updateCompany = async (
+  companyId: string,
+  companyData: Company
+): Promise<Company> => {
+  const response = await api.put<Company>(`/companies/${companyId}`, companyData);
+  return response.data;
+}
+
 export const deleteCompany = async (id: string): Promise<void> => {
   await api.delete(`/companies/${id}`);
+};
+
+// Fetch all items
+export const fetchItems = async (): Promise<Item[]> => {
+  const response = await api.get<Item[]>('/items');
+  return response.data;
+};
+
+export const fetchItemById = async (itemId: string) => {
+  const response = await api.get<Company>(`/items/${itemId}`);
+  return response.data
+};
+
+export const createItem = async (itemData: Item): Promise<Item> => {
+  const response = await api.post<Item>('/items', itemData);
+  return response.data;
+};
+
+export const updateItem = async (
+  itemId: string,
+  itemData: Item
+): Promise<Item> => {
+  const response = await api.put<Item>(`/items/${itemId}`, itemData);
+  return response.data;
+}
+
+export const deleteItem = async (id: string): Promise<void> => {
+  await api.delete(`/items/${id}`);
 };

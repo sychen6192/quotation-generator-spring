@@ -26,8 +26,8 @@ const Header: React.FC = () => {
         <nav className="hidden md:block">
           <ul className="flex space-x-8">
             <li><a href="#" className="hover:text-primary transition-colors duration-300">Home</a></li>
-            <li><a href="/company" className="hover:text-primary transition-colors duration-300">Companies</a></li>
-            <li><a href="/item" className="hover:text-primary transition-colors duration-300">Items</a></li>
+            <li><a href="/companies" className="hover:text-primary transition-colors duration-300">Company List</a></li>
+            <li><a href="/items" className="hover:text-primary transition-colors duration-300">Item List</a></li>
 
           </ul>
         </nav>
@@ -38,8 +38,8 @@ const Header: React.FC = () => {
         <nav className="md:hidden bg-gray-50 border-t border-gray-200 transition-height duration-300 ease-in-out">
           <ul className="px-4 py-2">
             <li><a href="#" className="block py-2 hover:text-primary">Home</a></li>
-            <li><a href="/company" className="block py-2 hover:text-primary">Companies</a></li>
-            <li><a href="/item" className="block py-2 hover:text-primary">Items</a></li>
+            <li><a href="/companies" className="block py-2 hover:text-primary">Company List</a></li>
+            <li><a href="/items" className="block py-2 hover:text-primary">Item List</a></li>
           </ul>
         </nav>
       )}
