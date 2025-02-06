@@ -7,32 +7,58 @@ import Header from "../../components/Header";
 export interface Item {
   id: string;
   name: string;
-  quantity: number;
   unitPrice: number;
 }
 
 const AddItemPage: React.FC = () => {
   const navigate = useNavigate();
+
   const [item, setItem] = useState<Item>({
     id: "", // id 由後端生成
     name: "",
-    quantity: 0,
     unitPrice: 0,
   });
 
-  const handleSave = async () => {
-    if (!item.name) {
-      alert("Item Name is required.");
-      return;
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validate = () => {
+    const tempErrors: { [key: string]: string } = {};
+
+    if (!item.name.trim()) {
+      tempErrors.name = "Item Name is required.";
+    }
+    if (item.unitPrice <= 0) {
+      tempErrors.unitPrice = "Unit Price must be greater than 0.";
     }
 
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setItem((prev) => ({
+      ...prev,
+      [name]: name === "name" ? value : Number(value),
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    setIsSubmitting(true);
     try {
       await createItem(item);
       alert("Item created successfully!");
-      navigate("/items"); // 更新後跳回 Item 列表
+      navigate("/items");
     } catch (error) {
       console.error("Error creating item:", error);
       alert("Failed to create item.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -44,44 +70,62 @@ const AddItemPage: React.FC = () => {
           <h1 className="text-2xl font-semibold mb-6 text-center">
             Add New Item
           </h1>
-          {/* 卡片式表單區塊：背景、圓角、陰影與內邊距 */}
           <div className="bg-white shadow-lg rounded-lg p-8">
-            <div className="space-y-4">
-              <input
-                className="border p-2 w-full rounded"
-                type="text"
-                placeholder="Item Name"
-                value={item.name}
-                onChange={(e) => setItem({ ...item, name: e.target.value })}
-              />
-              <input
-                className="border p-2 w-full rounded"
-                type="number"
-                placeholder="Quantity"
-                value={item.quantity}
-                onChange={(e) =>
-                  setItem({ ...item, quantity: Number(e.target.value) })
-                }
-              />
-              <input
-                className="border p-2 w-full rounded"
-                type="number"
-                step="0.01"
-                placeholder="Unit Price"
-                value={item.unitPrice}
-                onChange={(e) =>
-                  setItem({ ...item, unitPrice: Number(e.target.value) })
-                }
-              />
-              <div className="text-right">
-                <button
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
-                  onClick={handleSave}
-                >
-                  Save Item
-                </button>
+            <form onSubmit={handleSubmit} noValidate>
+              <div className="space-y-4">
+                {/* Item Name */}
+                <div>
+                  <label htmlFor="name" className="block mb-1 font-medium">
+                    Item Name
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    className="border p-2 w-full rounded"
+                    type="text"
+                    placeholder="Enter item name"
+                    value={item.name}
+                    onChange={handleChange}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
+                </div>
+
+                {/* Unit Price */}
+                <div>
+                  <label htmlFor="unitPrice" className="block mb-1 font-medium">
+                    Unit Price
+                  </label>
+                  <input
+                    id="unitPrice"
+                    name="unitPrice"
+                    className="border p-2 w-full rounded"
+                    type="number"
+                    placeholder="Enter unit price"
+                    value={item.unitPrice}
+                    onChange={handleChange}
+                    min="0"
+                    step="1"
+                  />
+                  {errors.unitPrice && (
+                    <p className="text-red-500 text-sm mt-1">{errors.unitPrice}</p>
+                  )}
+                </div>
+
+                <div className="text-right">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`px-4 py-2 bg-indigo-600 text-white rounded-lg transition-colors cursor-pointer ${
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
+                    }`}
+                  >
+                    {isSubmitting ? "Saving..." : "Save Item"}
+                  </button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </Layout>

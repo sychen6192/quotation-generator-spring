@@ -3,6 +3,7 @@ import { fetchCompanies, fetchQuotes } from '../../services/api';
 import Header from '../../components/Header';
 import CompanyTable from '../../components/CompanyTable';
 import Layout from '../../layouts/Layout';
+import { Helmet } from "react-helmet-async";
 
 export interface Company {
   id: string;
@@ -36,6 +37,9 @@ const CompanyPage: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Quote Gen - Company</title>
+      </Helmet>
       <Header />
       <Layout>
         {loading ? <p>Loading...</p> : <CompanyTable companies={companies} setCompanies={setCompanies} />}

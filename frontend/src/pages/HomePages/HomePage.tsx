@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { fetchQuotes } from '../../services/api';
 import Header from '../../components/Header';
-import CompanyTable from '../../components/CompanyTable';
+import { Helmet } from "react-helmet-async";
+import Layout from '../../layouts/Layout';
+import QuotationTable from '../../components/QuotationTable';
 
-interface Quote {
+export interface Quote {
   id: string;
   quoteDescription: string;
+  validUntil: string; 
+  author: string;
+  sales: string;
+  payment: string;
+  taxIsIncluded: boolean;
+  shippingDate?: string; // 可選，若有設定
+  shippingMethod?: string; // 可選
+  company: {
+    id: number;
+    name: string;
+  };
+  createdTimestamp: string;
+  updatedTimestamp: string;
 }
 
 const HomePage: React.FC = () => {
-  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [quotations, setQuotations] = useState<Quote[]>([]);
 
   useEffect(() => {
     const loadQuotes = async () => {
       try {
         const data = await fetchQuotes(); 
-        setQuotes(data);
+        setQuotations(data);
       } catch (error) {
         console.error('Failed to fetch quotes:', error);
       }
@@ -25,9 +40,13 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Quote Gen - Home</title>
+      </Helmet>
       <Header />
-      <h1>Quotes</h1>
-      <CompanyTable />
+      <Layout>
+        <QuotationTable quotations={quotations} setQuotations={setQuotations} />
+      </Layout>
     </div>
   );
 };

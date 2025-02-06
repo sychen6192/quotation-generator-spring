@@ -6,12 +6,14 @@ import AddCompanyPage from "./pages/CompanyPages/AddCompanyPage";
 import ItemPage from "./pages/ItemPages/ItemPage";
 import EditItemPage from "./pages/ItemPages/EditItemPage";
 import AddItemPage from "./pages/ItemPages/AddItemPage";
+import AddQuotationPage from "./pages/HomePages/AddQuatationPage";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/quotations/new" element={<AddQuotationPage />} />
         <Route path="/companies" element={<CompanyPage />} />
         <Route path="/companies/:id/edit" element={<EditCompanyPage />} />
         <Route path="/companies/new" element={<AddCompanyPage />} />

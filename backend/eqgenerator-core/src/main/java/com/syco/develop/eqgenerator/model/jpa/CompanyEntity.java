@@ -29,7 +29,7 @@ public class CompanyEntity {
     private String phoneNumber;
 
     @NotBlank
-    @Size(max = 500)
+    @Column(name = "address")
     private String address;
 
     @Column(name = "created_at", nullable = false, updatable = false)

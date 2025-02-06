@@ -10,8 +10,20 @@ const api = axios.create({
 // Define types for the data
 export interface Quote {
   id: string;
-  text: string;
+  quoteDescription: string;
+  validUntil: string; 
   author: string;
+  sales: string;
+  payment: string;
+  taxIsIncluded: boolean;
+  shippingDate?: string; // 可選，若有設定
+  shippingMethod?: string; // 可選
+  company: {
+    id: number;
+    name: string;
+  };
+  createdTimestamp: string;
+  updatedTimestamp: string;
 }
 
 export interface Company {
@@ -31,16 +43,6 @@ export interface Item {
   unitPrice: number;
 }
 
-export interface CreateQuoteData {
-  text: string;
-  author: string;
-}
-
-export interface UpdateQuoteData {
-  text?: string;
-  author?: string;
-}
-
 // Fetch all quotes
 export const fetchQuotes = async (): Promise<Quote[]> => {
   const response = await api.get<Quote[]>('/quotes');
@@ -54,7 +56,7 @@ export const fetchQuoteById = async (id: string): Promise<Quote> => {
 };
 
 // Create a new quote
-export const createQuote = async (data: CreateQuoteData): Promise<Quote> => {
+export const createQuote = async (data: Quote): Promise<Quote> => {
   const response = await api.post<Quote>('/quotes', data);
   return response.data;
 };
@@ -62,7 +64,7 @@ export const createQuote = async (data: CreateQuoteData): Promise<Quote> => {
 // Update an existing quote
 export const updateQuote = async (
   id: string,
-  data: UpdateQuoteData
+  data: Quote
 ): Promise<Quote> => {
   const response = await api.put<Quote>(`/quotes/${id}`, data);
   return response.data;

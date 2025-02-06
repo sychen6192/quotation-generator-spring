@@ -42,7 +42,6 @@ public class ItemController {
         return itemService.getItemById(id)
                 .map(existingItem -> {
                     existingItem.setName(item.getName());
-                    existingItem.setQuantity(item.getQuantity());
                     existingItem.setUnitPrice(item.getUnitPrice());
                     ItemEntity updatedItem = itemService.saveItem(existingItem);
                     return ResponseEntity.ok(updatedItem);

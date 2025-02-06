@@ -1,45 +1,60 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, MoreVertical } from "lucide-react";
-import { deleteItem } from "../services/api";
+import { deleteQuote } from "../services/api";
 
-export interface Item {
+export interface Quote {
   id: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
+  quoteDescription: string;
+  validUntil: string; 
+  author: string;
+  sales: string;
+  payment: string;
+  taxIsIncluded: boolean;
+  shippingDate?: string; // 可選，若有設定
+  shippingMethod?: string; // 可選
+  company: {
+    id: number;
+    name: string;
+  };
+  createdTimestamp: string;
+  updatedTimestamp: string;
 }
 
-interface ItemTableProps {
-  items: Item[];
-  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
+interface QuotationTableProps {
+  quotations: Quote[];
+  setQuotations: React.Dispatch<React.SetStateAction<Quote[]>>;
 }
 
-const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
+const QuotationTable: React.FC<QuotationTableProps> = ({
+  quotations,
+  setQuotations,
+}) => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  const handleDelete = async (itemId: string) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
+  const handleDelete = async (quoteId: string) => {
+    if (!window.confirm("Are you sure you want to delete this quotation?"))
+      return;
 
     try {
-      await deleteItem(itemId);
-      setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+      await deleteQuote(quoteId);
+      setQuotations(quotations.filter((quote) => quote.id !== quoteId));
     } catch (error) {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item. Please try again.");
+      console.error("Error deleting quotation:", error);
+      alert("Failed to delete quotation. Please try again.");
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  const filteredQuotations = quotations.filter((quote) =>
+    quote.quoteDescription.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto">
         <div className="min-w-full inline-block align-middle">
-          {/* 搜尋框 + 新增 Item 按鈕 */}
+          {/* 搜尋與新增按鈕 */}
           <div className="flex items-center mb-4">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
@@ -59,17 +74,18 @@ const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
               </div>
               <input
                 type="text"
+                id="default-search"
                 className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none"
-                placeholder="Search for items"
+                placeholder="Search for quotation"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
-              onClick={() => navigate(`/items/new`)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer ml-4"
+              onClick={() => navigate(`/quotations/new`)}
             >
-              + Add New Item
+              + Add New Quotation
             </button>
           </div>
 
@@ -78,45 +94,57 @@ const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
             <table className="min-w-full rounded-xl">
               <thead>
                 <tr className="bg-gray-50">
-                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-t-xl">
-                    Item Name
+                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-tl-xl">
+                    Quotation
                   </th>
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
-                    Unit Price
+                    Valid Until
                   </th>
-                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-t-xl">
+                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
+                    Author
+                  </th>
+                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
+                    Company
+                  </th>
+                  <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-tr-xl">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-300">
-                {filteredItems.map((item) => (
+                {filteredQuotations.map((quote) => (
                   <tr
-                    key={item.id}
+                    key={quote.id}
                     className="bg-white transition-all duration-500 hover:bg-gray-50"
                   >
                     <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {item.name}
+                      {quote.quoteDescription}
                     </td>
                     <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${item.unitPrice.toFixed(2)}
+                      {quote.validUntil}
+                    </td>
+                    <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {quote.author}
+                    </td>
+                    <td className="p-5 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {quote.company?.name}
                     </td>
                     <td className="p-5">
                       <div className="flex items-center gap-1">
                         <button className="p-2 rounded-full transition-all duration-500 cursor-pointer">
                           <Edit
                             className="w-5 h-5 text-indigo-500"
-                            onClick={() => navigate(`/items/${item.id}/edit`)}
+                            onClick={() =>
+                              navigate(`/quotations/${quote.id}/edit`)
+                            }
                           />
                         </button>
-
                         <button className="p-2 rounded-full transition-all duration-500 cursor-pointer">
                           <Trash
                             className="w-5 h-5 text-red-600"
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => handleDelete(quote.id)}
                           />
                         </button>
-
                         <button className="p-2 rounded-full transition-all duration-500 cursor-pointer">
                           <MoreVertical className="w-5 h-5 text-black" />
                         </button>
@@ -124,10 +152,10 @@ const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
                     </td>
                   </tr>
                 ))}
-                {filteredItems.length === 0 && (
+                {filteredQuotations.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="text-center p-5 text-gray-500">
-                      No items found.
+                    <td colSpan={5} className="text-center p-5 text-gray-500">
+                      No results found.
                     </td>
                   </tr>
                 )}
@@ -140,4 +168,4 @@ const ItemTable: React.FC<ItemTableProps> = ({ items, setItems }) => {
   );
 };
 
-export default ItemTable;
+export default QuotationTable;
