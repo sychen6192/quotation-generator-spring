@@ -3,16 +3,10 @@ import { fetchItems } from "../../services/api";
 import Header from "../../components/Header";
 import ItemTable from "../../components/ItemTable";
 import Layout from "../../layouts/Layout";
-
-export interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-}
+import { Item } from "../../types/index";
 
 const CompanyPage: React.FC = () => {
-  const [Items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +30,7 @@ const CompanyPage: React.FC = () => {
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <ItemTable items={Items} setItems={setItems} />
+          <ItemTable items={items} setItems={setItems} />
         )}
       </Layout>
     </>

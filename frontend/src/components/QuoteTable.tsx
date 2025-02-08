@@ -2,51 +2,34 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, MoreVertical } from "lucide-react";
 import { deleteQuote } from "../services/api";
+import { Quote } from "../types/index";
 
-export interface Quote {
-  id: string;
-  quoteDescription: string;
-  validUntil: string; 
-  author: string;
-  sales: string;
-  payment: string;
-  taxIsIncluded: boolean;
-  shippingDate?: string; // 可選，若有設定
-  shippingMethod?: string; // 可選
-  company: {
-    id: number;
-    name: string;
-  };
-  createdTimestamp: string;
-  updatedTimestamp: string;
+interface QuoteTableProps {
+  quotes: Quote[];
+  setQuotes: React.Dispatch<React.SetStateAction<Quote[]>>;
 }
 
-interface QuotationTableProps {
-  quotations: Quote[];
-  setQuotations: React.Dispatch<React.SetStateAction<Quote[]>>;
-}
-
-const QuotationTable: React.FC<QuotationTableProps> = ({
-  quotations,
-  setQuotations,
+const QuoteTable: React.FC<QuoteTableProps> = ({
+  quotes,
+  setQuotes,
 }) => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const handleDelete = async (quoteId: string) => {
-    if (!window.confirm("Are you sure you want to delete this quotation?"))
+    if (!window.confirm("Are you sure you want to delete this quote?"))
       return;
 
     try {
       await deleteQuote(quoteId);
-      setQuotations(quotations.filter((quote) => quote.id !== quoteId));
+      setQuotes(quotes.filter((quote) => quote.id !== quoteId));
     } catch (error) {
-      console.error("Error deleting quotation:", error);
-      alert("Failed to delete quotation. Please try again.");
+      console.error("Error deleting quote:", error);
+      alert("Failed to delete quote. Please try again.");
     }
   };
 
-  const filteredQuotations = quotations.filter((quote) =>
+  const filteredQuotes = quotes.filter((quote) =>
     quote.quoteDescription.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -76,16 +59,16 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
                 type="text"
                 id="default-search"
                 className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none"
-                placeholder="Search for quotation"
+                placeholder="Search for quote"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer ml-4"
-              onClick={() => navigate(`/quotations/new`)}
+              onClick={() => navigate(`/quotes/new`)}
             >
-              + Add New Quotation
+              + Add New Quote
             </button>
           </div>
 
@@ -95,7 +78,7 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
               <thead>
                 <tr className="bg-gray-50">
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize rounded-tl-xl">
-                    Quotation
+                    Quote
                   </th>
                   <th className="p-5 text-left text-sm font-semibold text-gray-900 capitalize">
                     Valid Until
@@ -112,7 +95,7 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-300">
-                {filteredQuotations.map((quote) => (
+                {filteredQuotes.map((quote) => (
                   <tr
                     key={quote.id}
                     className="bg-white transition-all duration-500 hover:bg-gray-50"
@@ -135,7 +118,7 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
                           <Edit
                             className="w-5 h-5 text-indigo-500"
                             onClick={() =>
-                              navigate(`/quotations/${quote.id}/edit`)
+                              navigate(`/quotes/${quote.id}/edit`)
                             }
                           />
                         </button>
@@ -152,7 +135,7 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
                     </td>
                   </tr>
                 ))}
-                {filteredQuotations.length === 0 && (
+                {filteredQuotes.length === 0 && (
                   <tr>
                     <td colSpan={5} className="text-center p-5 text-gray-500">
                       No results found.
@@ -168,4 +151,4 @@ const QuotationTable: React.FC<QuotationTableProps> = ({
   );
 };
 
-export default QuotationTable;
+export default QuoteTable;

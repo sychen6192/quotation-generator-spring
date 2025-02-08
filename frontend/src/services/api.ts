@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Quote, Company, Item } from '../types/index';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL as string,
@@ -6,42 +7,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// Define types for the data
-export interface Quote {
-  id: string;
-  quoteDescription: string;
-  validUntil: string; 
-  author: string;
-  sales: string;
-  payment: string;
-  taxIsIncluded: boolean;
-  shippingDate?: string; // 可選，若有設定
-  shippingMethod?: string; // 可選
-  company: {
-    id: number;
-    name: string;
-  };
-  createdTimestamp: string;
-  updatedTimestamp: string;
-}
-
-export interface Company {
-  id: string;
-  name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-}
 
 // Fetch all quotes
 export const fetchQuotes = async (): Promise<Quote[]> => {

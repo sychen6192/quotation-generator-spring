@@ -3,13 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"; // Next.js 用 `useRo
 import { fetchItemById, updateItem } from "../../services/api";
 import Layout from "../../layouts/Layout";
 import Header from "../../components/Header";
-
-export interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-}
+import { Item } from "../../types/index";
 
 const EditItemPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // 從網址獲取 itemId

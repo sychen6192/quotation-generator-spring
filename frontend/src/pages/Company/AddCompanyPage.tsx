@@ -3,15 +3,7 @@ import { useNavigate } from "react-router-dom"; // Next.js 用 `useRouter`
 import { createCompany } from "../../services/api";
 import Layout from "../../layouts/Layout";
 import Header from "../../components/Header";
-export interface Company {
-  id: string;
-  name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Company } from "../../types/index";
 
 const AddCompanyPage: React.FC = () => {
   const navigate = useNavigate();

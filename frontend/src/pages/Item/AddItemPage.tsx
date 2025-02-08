@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createItem } from "../../services/api";
 import Layout from "../../layouts/Layout";
 import Header from "../../components/Header";
-
-export interface Item {
-  id: string;
-  name: string;
-  unitPrice: number;
-}
+import { Item } from "../../types/index";
 
 const AddItemPage: React.FC = () => {
   const navigate = useNavigate();

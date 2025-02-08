@@ -2,6 +2,8 @@ package com.syco.develop.eqgenerator.controller.rest;
 
 import com.syco.develop.eqgenerator.model.jpa.QuoteEntity;
 import com.syco.develop.eqgenerator.service.QuoteService;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/quotes")
+@Slf4j
 public class QuoteController {
 
     @Autowired
@@ -18,6 +21,8 @@ public class QuoteController {
 
     @PostMapping
     public ResponseEntity<QuoteEntity> createQuote(@RequestBody QuoteEntity quote) {
+        log.info("Received payload");
+        log.info(quote.toString());
         QuoteEntity savedQuote = quoteService.saveQuote(quote);
         return ResponseEntity.ok(savedQuote);
     }

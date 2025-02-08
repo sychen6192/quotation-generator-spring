@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, MoreVertical } from "lucide-react";
 import { deleteItem } from "../services/api";
-
-export interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-}
+import { Item } from "../types/index";
 
 interface ItemTableProps {
   items: Item[];

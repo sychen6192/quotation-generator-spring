@@ -4,17 +4,7 @@ import Header from '../../components/Header';
 import CompanyTable from '../../components/CompanyTable';
 import Layout from '../../layouts/Layout';
 import { Helmet } from "react-helmet-async";
-
-export interface Company {
-  id: string;
-  name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+import { Company } from "../../types/index";
 
 const CompanyPage: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);

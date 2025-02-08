@@ -2,16 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, MoreVertical } from "lucide-react";
 import { deleteCompany } from "../services/api";
-
-export interface Company {
-  id: string;
-  name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Company } from "../types/index";
 
 interface CompanyTableProps {
   companies: Company[];

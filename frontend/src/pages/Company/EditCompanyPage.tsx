@@ -3,16 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"; // Next.js 用 `useRo
 import { fetchCompanyById, updateCompany } from "../../services/api";
 import Layout from "../../layouts/Layout";
 import Header from "../../components/Header";
-
-export interface Company {
-  id: string;
-  name: string;
-  taxId: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Company } from "../../types/index";
 
 const EditCompanyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // 從網址獲取 companyId

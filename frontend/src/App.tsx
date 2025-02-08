@@ -1,19 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePages/HomePage";
-import CompanyPage from "./pages/CompanyPages/CompanyPage";
-import EditCompanyPage from "./pages/CompanyPages/EditCompanyPage";
-import AddCompanyPage from "./pages/CompanyPages/AddCompanyPage";
-import ItemPage from "./pages/ItemPages/ItemPage";
-import EditItemPage from "./pages/ItemPages/EditItemPage";
-import AddItemPage from "./pages/ItemPages/AddItemPage";
-import AddQuotationPage from "./pages/HomePages/AddQuatationPage";
+import HomePage from "./pages/Home/HomePage";
+import CompanyPage from "./pages/Company/CompanyPage";
+import EditCompanyPage from "./pages/Company/EditCompanyPage";
+import AddCompanyPage from "./pages/Company/AddCompanyPage";
+import ItemPage from "./pages/Item/ItemPage";
+import EditItemPage from "./pages/Item/EditItemPage";
+import AddItemPage from "./pages/Item/AddItemPage";
+import AddQuotePage from "./pages/Quote/AddQuotePage";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/quotations/new" element={<AddQuotationPage />} />
+        <Route path="/quotes/new" element={<AddQuotePage />} />
         <Route path="/companies" element={<CompanyPage />} />
         <Route path="/companies/:id/edit" element={<EditCompanyPage />} />
         <Route path="/companies/new" element={<AddCompanyPage />} />
