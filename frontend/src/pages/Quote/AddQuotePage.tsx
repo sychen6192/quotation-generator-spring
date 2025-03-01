@@ -11,11 +11,20 @@ import { SHIPPING_METHOD, SALES, AUTHORS, PAYMENT } from "../../constant";
 const AddQuotePage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quote, setQuote] = useState<Quote>({
+    validUntil: new Date(),
+    author: AUTHORS[0]?.value || "",
+    sales: SALES[0]?.value || "",
+    payment: PAYMENT[0]?.value || "",
+    taxIsIncluded: false,
+    shippingDate: new Date(),
+    shippingMethod: SHIPPING_METHOD[0]?.value || "",
+    quoteDescription: "",
+    // 根據 Quote 型別補上其他必要的屬性
+  });
   const [companies, setCompanies] = useState<Company[]>([]);
   const [items, setItems] = useState<Item[]>([]);
 
-  const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   // 動態品項表格的 state
@@ -69,8 +78,12 @@ const AddQuotePage: React.FC = () => {
     setQuoteItems(quoteItems.filter((_, i) => i !== index));
   };
 
-  const handleItemChange = (index: number, field: keyof QuoteItem, value: any) => {
-    setQuoteItems(prevItems =>
+  const handleItemChange = (
+    index: number,
+    field: keyof QuoteItem,
+    value: any
+  ) => {
+    setQuoteItems((prevItems) =>
       prevItems.map((itm, i) =>
         i === index ? { ...itm, [field]: value } : itm
       )
@@ -98,9 +111,13 @@ const AddQuotePage: React.FC = () => {
                   </label>
                   <select
                     value={selectedCompany}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                      setSelectedCompany(e.target.value ? e.target.value : '')
-                    }
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      const companyId = e.target.value;
+                      setQuote((prev) => ({
+                        ...prev!,
+                        company: { id: Number(companyId) },
+                      }));
+                    }}
                     className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     required
                   >
@@ -108,7 +125,7 @@ const AddQuotePage: React.FC = () => {
                       請選擇一間公司
                     </option>
                     {companies.map((company) => (
-                      <option key={company.id} value={company.name}>
+                      <option key={company.id} value={company.id}>
                         {company.name} ({company.taxId})
                       </option>
                     ))}
@@ -124,9 +141,12 @@ const AddQuotePage: React.FC = () => {
                     className="border p-2 w-full rounded"
                     type="date"
                     placeholder="Valid Until"
-                    defaultValue={new Date().toISOString().split('T')[0]}
+                    defaultValue={new Date().toISOString().split("T")[0]}
                     onChange={(e) =>
-                      setQuote({ ...quote!, validUntil: new Date(e.target.value) })
+                      setQuote({
+                        ...quote!,
+                        validUntil: new Date(e.target.value),
+                      })
                     }
                   />
                 </div>
@@ -196,16 +216,28 @@ const AddQuotePage: React.FC = () => {
                   <table className="w-full mb-4 border-collapse">
                     <thead>
                       <tr className="border-b">
-                        <th className="px-2 py-1 text-left" style={{ width: "60%" }}>
+                        <th
+                          className="px-2 py-1 text-left"
+                          style={{ width: "60%" }}
+                        >
                           Item
                         </th>
-                        <th className="px-2 py-1 text-left" style={{ width: "30%" }}>
+                        <th
+                          className="px-2 py-1 text-left"
+                          style={{ width: "30%" }}
+                        >
                           Unit price
                         </th>
-                        <th className="px-2 py-1 text-left" style={{ width: "5%" }}>
+                        <th
+                          className="px-2 py-1 text-left"
+                          style={{ width: "5%" }}
+                        >
                           Qty.
                         </th>
-                        <th className="px-2 py-1 text-center" style={{ width: "5%" }}>
+                        <th
+                          className="px-2 py-1 text-center"
+                          style={{ width: "5%" }}
+                        >
                           <button type="button" onClick={handleAddItem}>
                             <Plus className="w-5 h-5 text-green-600" />
                           </button>
@@ -220,13 +252,21 @@ const AddQuotePage: React.FC = () => {
                               value={item.name}
                               onChange={(e) => {
                                 const selectedItemName = e.target.value;
-                                handleItemChange(index, "name", selectedItemName)
+                                handleItemChange(
+                                  index,
+                                  "name",
+                                  selectedItemName
+                                );
                                 const selectedOption = items.find(
                                   (item) => item.name === selectedItemName
                                 );
 
                                 if (selectedOption) {
-                                  handleItemChange(index, "unitPrice", selectedOption.unitPrice);
+                                  handleItemChange(
+                                    index,
+                                    "unitPrice",
+                                    selectedOption.unitPrice
+                                  );
                                 } else {
                                   handleItemChange(index, "unitPrice", 0);
                                 }
@@ -246,7 +286,11 @@ const AddQuotePage: React.FC = () => {
                               type="text"
                               value={item.unitPrice}
                               onChange={(e) =>
-                                handleItemChange(index, "unitPrice", Number(e.target.value))
+                                handleItemChange(
+                                  index,
+                                  "unitPrice",
+                                  Number(e.target.value)
+                                )
                               }
                               className="border p-1 w-full rounded"
                               placeholder="單價"
@@ -257,13 +301,20 @@ const AddQuotePage: React.FC = () => {
                               type="text"
                               value={item.quantity}
                               onChange={(e) =>
-                                handleItemChange(index, "quantity", Number(e.target.value))
+                                handleItemChange(
+                                  index,
+                                  "quantity",
+                                  Number(e.target.value)
+                                )
                               }
                               className="border p-1 w-full rounded"
                               placeholder="數量"
                             />
                           </td>
-                          <td className="px-2 py-1 text-center" style={{ width: "5%" }}>
+                          <td
+                            className="px-2 py-1 text-center"
+                            style={{ width: "5%" }}
+                          >
                             <button
                               type="button"
                               className="p-2 rounded-full transition-all duration-500 cursor-pointer"
@@ -302,9 +353,12 @@ const AddQuotePage: React.FC = () => {
                     className="border p-2 w-full rounded"
                     type="date"
                     placeholder="Shipping Date"
-                    defaultValue={new Date().toISOString().split('T')[0]}
+                    defaultValue={new Date().toISOString().split("T")[0]}
                     onChange={(e) =>
-                      setQuote({ ...quote!, shippingDate: new Date(e.target.value) })
+                      setQuote({
+                        ...quote!,
+                        shippingDate: new Date(e.target.value),
+                      })
                     }
                   />
                 </div>

@@ -17,7 +17,7 @@ export interface Quote {
   payment: string;
   taxIsIncluded: boolean;
   shippingDate?: Date;
-  shippingMethod?: string; 
+  shippingMethod?: string;
   company: {
     id: number;
     name: string;

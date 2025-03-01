@@ -3,9 +3,9 @@ package com.syco.develop.eqgenerator.model.jpa;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -16,11 +16,8 @@ public class QuoteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "quote_description")
-    private String quoteDescription;
-
-    @Column(name = "quote_valid_date", nullable = false)
-    private LocalDate validUntil;
+    @Column(name = "valid_until", nullable = false)
+    private Date validUntil;
 
     @Column(name = "author", nullable = false)
     private String author;
@@ -34,32 +31,37 @@ public class QuoteEntity {
     @Column(name = "tax_is_included", nullable = false)
     private boolean taxIsIncluded;
 
+    @Column(name = "remark")
+    private String remark;
+
     @Column(name = "shipping_date")
     private Date shippingDate;
 
     @Column(name = "shipping_method")
     private String shippingMethod;
 
-    // 關聯到 CompanyEntity（多對一）
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private CompanyEntity company;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdTimestamp;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedTimestamp;
+    private Date updatedAt;
+
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuoteItemEntity> items = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
-        this.createdTimestamp = LocalDateTime.now();
-        this.updatedTimestamp = LocalDateTime.now();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedTimestamp = LocalDateTime.now();
+        this.updatedAt = new Date();
     }
 
 }

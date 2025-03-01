@@ -1,13 +1,17 @@
 package com.syco.develop.eqgenerator.controller.rest;
 
+import com.google.gson.Gson;
+import com.syco.develop.eqgenerator.model.dto.QuoteDTO;
 import com.syco.develop.eqgenerator.model.jpa.QuoteEntity;
 import com.syco.develop.eqgenerator.service.QuoteService;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -19,43 +23,56 @@ public class QuoteController {
     @Autowired
     private QuoteService quoteService;
 
-    @PostMapping
-    public ResponseEntity<QuoteEntity> createQuote(@RequestBody QuoteEntity quote) {
-        log.info("Received payload");
-        log.info(quote.toString());
-        QuoteEntity savedQuote = quoteService.saveQuote(quote);
-        return ResponseEntity.ok(savedQuote);
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<QuoteEntity>> getAllQuotes() {
+    public ResponseEntity<List<QuoteDTO>> getAllQuotes() {
         List<QuoteEntity> quotes = quoteService.getAllQuotes();
-        return ResponseEntity.ok(quotes);
+        List<QuoteDTO> quoteDTOs = quotes.stream()
+                .map(quote -> modelMapper.map(quote, QuoteDTO.class))
+                .toList();
+        return ResponseEntity.ok(quoteDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuoteEntity> getQuoteById(@PathVariable Long id) {
+    public ResponseEntity<QuoteDTO> getQuoteById(@PathVariable Long id) {
         return quoteService.getQuoteById(id)
-                .map(ResponseEntity::ok)
+                .map(quote -> ResponseEntity.ok(modelMapper.map(quote, QuoteDTO.class)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping
+    public ResponseEntity<QuoteDTO> createQuote(@RequestBody String body) {
+        log.info("Received payload: {}", body);
+        Gson gson = new Gson();
+        QuoteDTO quoteDTO = gson.fromJson(body, QuoteDTO.class);
+        QuoteEntity savedQuote = quoteService.saveQuote(quoteDTO);
+        QuoteDTO savedQuoteDTO = modelMapper.map(savedQuote, QuoteDTO.class);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedQuoteDTO.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(savedQuoteDTO);
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<QuoteEntity> updateQuote(
-            @PathVariable Long id,
-            @RequestBody QuoteEntity quote) {
+    public ResponseEntity<QuoteDTO> updateQuote(@PathVariable Long id, @RequestBody QuoteDTO quoteDTO) {
         return quoteService.getQuoteById(id)
                 .map(existingQuote -> {
-                    existingQuote.setQuoteDescription(quote.getQuoteDescription());
-                    existingQuote.setValidUntil(quote.getValidUntil());
-                    existingQuote.setAuthor(quote.getAuthor());
-                    existingQuote.setSales(quote.getSales());
-                    existingQuote.setPayment(quote.getPayment());
-                    existingQuote.setTaxIsIncluded(quote.isTaxIsIncluded());
-                    existingQuote.setShippingDate(quote.getShippingDate());
-                    existingQuote.setShippingMethod(quote.getShippingMethod());
+                    existingQuote.setRemark(quoteDTO.getRemark());
+                    existingQuote.setValidUntil(quoteDTO.getValidUntil());
+                    existingQuote.setAuthor(quoteDTO.getAuthor());
+                    existingQuote.setSales(quoteDTO.getSales());
+                    existingQuote.setPayment(quoteDTO.getPayment());
+                    existingQuote.setTaxIsIncluded(quoteDTO.isTaxIsIncluded());
+                    existingQuote.setShippingDate(quoteDTO.getShippingDate());
+                    existingQuote.setShippingMethod(quoteDTO.getShippingMethod());
                     QuoteEntity updatedQuote = quoteService.saveQuote(existingQuote);
-                    return ResponseEntity.ok(updatedQuote);
+                    QuoteDTO updatedQuoteDTO = modelMapper.map(updatedQuote, QuoteDTO.class);
+                    return ResponseEntity.ok(updatedQuoteDTO);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

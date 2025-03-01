@@ -1,32 +1,16 @@
 package com.syco.develop.eqgenerator.service;
 
 import com.syco.develop.eqgenerator.model.jpa.QuoteEntity;
-import com.syco.develop.eqgenerator.repository.QuoteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class QuoteService {
+public interface QuoteService {
+    QuoteEntity saveQuote(QuoteDTO quote);
 
-    @Autowired
-    private QuoteRepository quoteRepository;
+    List<QuoteEntity> getAllQuotes();
 
-    public QuoteEntity saveQuote(QuoteEntity quote) {
-        return quoteRepository.save(quote);
-    }
+    Optional<QuoteEntity> getQuoteById(Long id);
 
-    public List<QuoteEntity> getAllQuotes() {
-        return quoteRepository.findAll();
-    }
-
-    public Optional<QuoteEntity> getQuoteById(Long id) {
-        return quoteRepository.findById(id);
-    }
-
-    public void deleteQuoteById(Long id) {
-        quoteRepository.deleteById(id);
-    }
+    void deleteQuoteById(Long id);
 }
